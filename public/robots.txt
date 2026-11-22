@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://arsh-portfolio-v3ns.netlify.app/sitemap.xml
+Sitemap: https://arsh-portfolio-blond.vercel.app/sitemap.xml
