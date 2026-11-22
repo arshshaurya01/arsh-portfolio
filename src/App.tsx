@@ -3,14 +3,14 @@ import {
   motion, useMotionValue, useScroll, useSpring, useTransform,
   type MotionValue,
 } from 'framer-motion'
-import { ArrowDown, ArrowUpRight, Github, Instagram, Phone } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, Phone } from 'lucide-react'
 
 const portrait = '/arsh-profile.png'
 const decorations = [
   { src: 'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png', className: 'decor moon', x: -80, delay: .1, alt: '3D moon' },
   { src: 'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png', className: 'decor object-left', x: -80, delay: .25, alt: 'Abstract 3D object' },
   { src: 'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png', className: 'decor lego', x: 80, delay: .15, alt: '3D building block' },
-  { src: 'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png', className: 'decor object-right', x: 80, delay: .3, alt: '3D abstract sculpture' },
+  { src: 'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png', className: 'decor object-right', x: 80, delay: .3, alt: 'Abstract 3D sculpture' },
 ]
 const services = [['Website Development', 'Building websites and practical web experiences. Project experience includes JavaScript, HTML/CSS, Node.js, and live dashboard interfaces.']]
 const projects = [{ name: 'Smart Umbrella — Campus Sharing System', type: 'Personal · Working prototype' }]
@@ -69,23 +69,31 @@ function Marquee() {
   </section>
 }
 
+function AnimatedText({ text }: { text: string }) {
+  const ref = useRef<HTMLParagraphElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.2'] })
+  const words = text.split(' ')
+  let charOffset = 0
+  return <p className="animated-copy" ref={ref} aria-label={text}>{words.map((word, wordIndex) => {
+    const start = charOffset; charOffset += word.length + 1
+    return <span className="word" key={`${word}-${wordIndex}`}>{word.split('').map((char, charIndex) => {
+      const index = start + charIndex
+      return <RevealChar key={`${index}-${char}`} progress={scrollYProgress} index={index} total={text.length}>{char}</RevealChar>
+    })}{wordIndex < words.length - 1 && <span> </span>}</span>
+  })}</p>
+}
+
+function RevealChar({ progress, index, total, children }: { progress: MotionValue<number>; index: number; total: number; children: string }) {
+  const start = index / total; const end = start + 1 / total
+  const opacity = useTransform(progress, [start, end], [.2, 1])
+  return <motion.span style={{ opacity }}>{children}</motion.span>
+}
+
 function About() {
-  return <section id="about" className="about-section about-redesign">
+  const copy = "I’m Arsh, an experienced web developer who builds websites and useful digital experiences. I enjoy bringing ideas to life through clear interfaces and practical technology. My Smart Umbrella project combines a student portal and operator dashboard with ESP32 stations, RFID access, rain detection, and transaction tracking."
+  return <section id="about" className="about-section">
     {decorations.map((item) => <FadeIn key={item.alt} delay={item.delay} duration={.9} x={item.x} className={item.className}><img src={item.src} loading="lazy" alt={item.alt} /></FadeIn>)}
-    <div className="about-grid">
-      <div className="about-story">
-        <FadeIn><span className="about-kicker">A LITTLE ABOUT ME</span></FadeIn>
-        <FadeIn delay={.08}><h2>I build useful things for the web.</h2></FadeIn>
-        <FadeIn delay={.16}><p>I’m Arsh, an experienced web developer who enjoys turning ideas into clear, easy-to-use websites. I care about thoughtful details, smooth experiences, and making technology useful in everyday life.</p></FadeIn>
-        <FadeIn delay={.22}><p className="about-story-secondary">I work with HTML, CSS, JavaScript, and Node.js. I also enjoy exploring how software can connect with the physical world.</p></FadeIn>
-        <FadeIn delay={.28}><div className="about-actions"><ContactButton className="about-contact" /><a className="about-work-link" href="#projects">See my work <ArrowUpRight size={16} /></a></div></FadeIn>
-      </div>
-      <FadeIn delay={.16} className="about-feature-card">
-        <div className="about-feature-head"><span>FEATURED PROJECT</span><span>WEB + IOT</span></div>
-        <div className="about-feature-body"><span className="about-feature-mark">SU</span><span className="about-feature-label">A CAMPUS SHARING PROTOTYPE</span><h3>Smart Umbrella</h3><p>A two-station umbrella sharing system with ESP32, RFID access, rain detection, and a live dashboard. Borrow at one station, return at another.</p><div className="about-tech-list"><span>ESP32</span><span>RFID</span><span>NODE.JS</span><span>WEB DASHBOARD</span></div></div>
-        <a className="about-feature-link" href="#projects">EXPLORE THE PROJECT <ArrowUpRight size={17} /></a>
-      </FadeIn>
-    </div>
+    <div className="about-content"><FadeIn><h2 className="hero-heading section-heading">About me</h2></FadeIn><FadeIn delay={.1} className="about-copy-wrap"><AnimatedText text={copy} /></FadeIn><FadeIn delay={.25}><ContactButton /></FadeIn></div>
   </section>
 }
 
@@ -116,7 +124,10 @@ function ProjectProgressCard({ project, index, total }: { project: typeof projec
 }
 
 function App() {
-  return <main className="page"><Hero /><Marquee /><About /><Services /><Projects /><footer id="contact" className="footer"><span>ARSH <i>®</i> WEB DEVELOPER</span><a href="https://www.linkedin.com/in/arsh-raj-b6a628315" target="_blank" rel="noreferrer">LINKEDIN <ArrowUpRight size={16}/></a><a href="https://github.com/arshshaurya01/arsh-portfolio" target="_blank" rel="noreferrer"><Github size={15}/> GITHUB <ArrowUpRight size={16}/></a><a href="https://www.instagram.com/shauryaarsh_/" target="_blank" rel="noreferrer"><Instagram size={15}/> INSTAGRAM <ArrowUpRight size={16}/></a><a href="tel:9229539352"><Phone size={15}/> 9229539352</a><a href="mailto:arshshaurya00@gmail.com">LET&apos;S TALK <ArrowUpRight size={16}/></a></footer></main>
+  return <main className="page"><Hero /><Marquee /><About /><Services /><Projects /><footer id="contact" className="footer"><span>ARSH <i>®</i> WEB DEVELOPER</span><a href="https://www.linkedin.com/in/arsh-raj-b6a628315" target="_blank" rel="noreferrer">LINKEDIN <ArrowUpRight size={16}/></a><a href="tel:9229539352"><Phone size={15}/> 9229539352</a><a href="mailto:arshshaurya00@gmail.com">LET&apos;S TALK <ArrowUpRight size={16}/></a></footer></main>
 }
 
 export default App
+
+
+The focused UI element is 1 AXWebArea raw.githubusercontent.com/arshshaurya01/arsh-portfolio/c473f313a100401304c0d752d0941cdfef533942/src/App.tsx
