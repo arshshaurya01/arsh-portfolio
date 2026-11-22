@@ -90,7 +90,7 @@ function RevealChar({ progress, index, total, children }: { progress: MotionValu
 }
 
 function About() {
-  const copy = "I’m Arsh, an experienced web developer who builds websites and useful digital experiences. I enjoy bringing ideas to life through clear interfaces and practical technology. My Smart Umbrella project combines a student portal and operator dashboard with ESP32 stations, RFID access, rain detection, and transaction tracking."
+  const copy = "I’m Arsh, a web developer who enjoys turning ideas into clear, useful websites. I work with HTML, CSS, JavaScript, and Node.js to build smooth, easy-to-use digital experiences. I care about thoughtful details, practical solutions, and creating technology that works well for people."
   return <section id="about" className="about-section">
     {decorations.map((item) => <FadeIn key={item.alt} delay={item.delay} duration={.9} x={item.x} className={item.className}><img src={item.src} loading="lazy" alt={item.alt} /></FadeIn>)}
     <div className="about-content"><FadeIn><h2 className="hero-heading section-heading">About me</h2></FadeIn><FadeIn delay={.1} className="about-copy-wrap"><AnimatedText text={copy} /></FadeIn><FadeIn delay={.25}><ContactButton /></FadeIn></div>
