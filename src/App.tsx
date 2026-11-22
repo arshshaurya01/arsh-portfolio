@@ -128,6 +128,3 @@ function App() {
 }
 
 export default App
-
-
-The focused UI element is 1 AXWebArea raw.githubusercontent.com/arshshaurya01/arsh-portfolio/c473f313a100401304c0d752d0941cdfef533942/src/App.tsx
